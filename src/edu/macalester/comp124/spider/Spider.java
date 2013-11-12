@@ -18,6 +18,7 @@ import java.util.Queue;
  *
  */
 public class Spider {
+    private boolean notIn = true;
 	/**
 	 * Urls waiting to be scraped.  The "work" left to do.
 	 */
@@ -55,32 +56,42 @@ public class Spider {
 	 * Crawls at most maxUrls starting with beginningUrl.
 	 * @param beginningUrl
 	 */
-	public void crawl(String beginningUrl) {
-        // add the first item to the queue
-		
-		while(finished.size() < maxUrls) {
-            // Get the next item from the queue
-		    String url = work.poll();
-		    if(url == null)
-		        break;
+    public void crawl(String beginningUrl) {
+        work.add(beginningUrl);
+        while (work.size() != 0) {
+            String url = work.poll();
+            if (url == null)
+                break;
+            else {
+                for (String check : finished) {
+                    if (url.equals(check)) {
+                        notIn = false;
+                    }
+                }
+                if (notIn) {
+                    processPage(url);
+                    while (finished.size() < maxUrls) {
+                        finished.add(url);
+                    }
+                }
+            }
+        }
+    }
 
-            // process the page and mark it as finished
-		}
-	}
-	
-	/**
+    /**
 	 * Retrieves content from a url and processes that content. 
-	 * @param baseUrl
-	 * @param html
-	 */
+	 * @param url
+     */
 	public void processPage(String url) {
 		String html = helper.retrieve(url);
 		if(html == null)
 		    return;
-		
         for (String link : helper.extractLinks(url, html)) {
+            urlCounter.countWord(url);
             if (!helper.isImage(link)) {
-                // Your work goes here
+                if(getUrlCounts().length < maxUrls){
+                    work.offer(link);
+                }
             }
         }
 	}
