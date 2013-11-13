@@ -41,7 +41,7 @@ public class TestSpider  {
 		
 		assertEquals(2, spider.getFinished().size());
 		assertTrue(spider.getFinished().contains(BEGINNING_URL));
-//		assertTrue(spider.getWork().size() > 10);
+		assertTrue(spider.getWork().size() > 10);
 		
 		for (String url : spider.getWork()) {
 			url = url.toLowerCase();

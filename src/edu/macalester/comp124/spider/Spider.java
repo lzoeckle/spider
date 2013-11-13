@@ -58,21 +58,15 @@ public class Spider {
 	 */
     public void crawl(String beginningUrl) {
         work.add(beginningUrl);
-        while (work.size() != 0) {
+        while (finished.size() < maxUrls){
             String url = work.poll();
-            if (url == null)
+            if (url == null){
                 break;
+            }
             else {
-                for (String check : finished) {
-                    if (url.equals(check)) {
-                        notIn = false;
-                    }
-                }
-                if (notIn) {
-                    processPage(url);
-                    while (finished.size() < maxUrls) {
+                if(!finished.contains(url)){
+                        processPage(url);
                         finished.add(url);
-                    }
                 }
             }
         }
@@ -87,11 +81,9 @@ public class Spider {
 		if(html == null)
 		    return;
         for (String link : helper.extractLinks(url, html)) {
-            urlCounter.countWord(url);
             if (!helper.isImage(link)) {
-                if(getUrlCounts().length < maxUrls){
-                    work.offer(link);
-                }
+                urlCounter.countWord(link);
+                work.offer(link);
             }
         }
 	}
